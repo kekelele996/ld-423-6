@@ -1,8 +1,9 @@
 import { DndContext, DragEndEvent, useDraggable, useDroppable } from '@dnd-kit/core';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { ChartConfig, Report } from '../../types';
 import { ChartPreview } from './ChartPreview';
 import { useDatasetStore } from '../../stores/datasetStore';
+import { computeDatasetWithFormulas } from '../../utils/formulaEngine';
 
 interface DraggableGridProps {
   report: Report;
@@ -35,7 +36,11 @@ const DropCanvas = ({ children }: { children: ReactNode }) => {
 };
 
 export const DraggableGrid = ({ report, charts, onAddChart }: DraggableGridProps) => {
-  const datasets = useDatasetStore((state) => state.datasets);
+  const rawDatasets = useDatasetStore((state) => state.datasets);
+  const datasets = useMemo(
+    () => rawDatasets.map((ds) => ({ ...ds, ...computeDatasetWithFormulas(ds) })),
+    [rawDatasets],
+  );
   const handleDragEnd = (event: DragEndEvent) => {
     if (event.over?.id === 'report-canvas') onAddChart(String(event.active.id));
   };

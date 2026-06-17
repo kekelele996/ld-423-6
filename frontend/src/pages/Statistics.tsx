@@ -5,10 +5,19 @@ import { StatCard } from '../components/common/StatCard';
 import { useDatasetStore } from '../stores/datasetStore';
 import { calculateStatSummary, correlation } from '../utils/statistics';
 import { DataType } from '../types';
+import { computeDatasetWithFormulas } from '../utils/formulaEngine';
 
 export const Statistics = () => {
-  const datasets = useDatasetStore((state) => state.datasets);
-  const dataset = datasets[0];
+  const rawDatasets = useDatasetStore((state) => state.datasets);
+  const rawDataset = rawDatasets[0];
+
+  const dataset = useMemo(() => {
+    if (!rawDataset) return undefined;
+    return { ...rawDataset, ...computeDatasetWithFormulas(rawDataset) };
+  }, [rawDataset]);
+
+  if (!dataset) return null;
+
   const numericColumns = dataset.columns.filter((column) => column.type === 'Number');
   const [field, setField] = useState(numericColumns[0]?.name ?? '');
   const summary = useMemo(() => calculateStatSummary(dataset.id, dataset.data, field), [dataset, field]);

@@ -5,6 +5,13 @@ export interface ColumnDefinition {
   type: DataType;
 }
 
+export interface FormulaColumn extends ColumnDefinition {
+  formula: string;
+  isFormula: true;
+}
+
+export type DatasetColumn = ColumnDefinition | FormulaColumn;
+
 export type DatasetRow = Record<string, string | number | boolean | null>;
 
 export interface Dataset {
@@ -15,7 +22,7 @@ export interface Dataset {
   importedAt: string;
   rowCount: number;
   columnCount: number;
-  columns: ColumnDefinition[];
+  columns: DatasetColumn[];
   tags: string[];
   data: DatasetRow[];
 }

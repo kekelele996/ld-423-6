@@ -26,33 +26,41 @@ export const FilterPanel = ({ datasetId }: FilterPanelProps) => {
           添加
         </button>
       </div>
-      {filters.map((filter) => (
-        <div className="filter-row" key={filter.id}>
-          <input type="checkbox" checked={filter.active} onChange={() => toggleFilter(filter.id)} aria-label="启用筛选" />
-          <select value={filter.fieldName} onChange={(event) => updateFilter({ ...filter, fieldName: event.target.value })}>
-            {dataset.columns.map((column) => (
-              <option key={column.name} value={column.name}>
-                {column.name}
-              </option>
-            ))}
-          </select>
-          <select value={filter.operator} onChange={(event) => updateFilter({ ...filter, operator: event.target.value as FilterOperator })}>
-            {Object.values(FilterOperator).map((operator) => (
-              <option key={operator} value={operator}>
-                {operator}
-              </option>
-            ))}
-          </select>
-          <input
-            value={String(filter.value)}
-            type={dataset.columns.find((column) => column.name === filter.fieldName)?.type === DataType.Number ? 'number' : 'text'}
-            onChange={(event) => updateFilter({ ...filter, value: event.target.value })}
-          />
-          <button type="button" onClick={() => removeFilter(filter.id)}>
-            删除
-          </button>
-        </div>
-      ))}
+      {filters.map((filter) => {
+        const selectedColumn = dataset.columns.find((column) => column.name === filter.fieldName);
+        const isFormula = selectedColumn && 'isFormula' in selectedColumn && selectedColumn.isFormula;
+        return (
+          <div className="filter-row" key={filter.id}>
+            <input type="checkbox" checked={filter.active} onChange={() => toggleFilter(filter.id)} aria-label="启用筛选" />
+            <select value={filter.fieldName} onChange={(event) => updateFilter({ ...filter, fieldName: event.target.value })}>
+              {dataset.columns.map((column) => {
+                const colIsFormula = 'isFormula' in column && column.isFormula;
+                return (
+                  <option key={column.name} value={column.name}>
+                    {column.name}{colIsFormula ? ' (fx)' : ''}
+                  </option>
+                );
+              })}
+            </select>
+            <select value={filter.operator} onChange={(event) => updateFilter({ ...filter, operator: event.target.value as FilterOperator })}>
+              {Object.values(FilterOperator).map((operator) => (
+                <option key={operator} value={operator}>
+                  {operator}
+                </option>
+              ))}
+            </select>
+            <input
+              value={String(filter.value)}
+              type={selectedColumn?.type === DataType.Number ? 'number' : 'text'}
+              onChange={(event) => updateFilter({ ...filter, value: event.target.value })}
+              placeholder={isFormula ? '公式列值' : ''}
+            />
+            <button type="button" onClick={() => removeFilter(filter.id)}>
+              删除
+            </button>
+          </div>
+        );
+      })}
     </aside>
   );
 };

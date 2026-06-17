@@ -3,12 +3,22 @@ import { ChartPreview } from '../components/common/ChartPreview';
 import { EmptyState } from '../components/common/EmptyState';
 import { useChartStore } from '../stores/chartStore';
 import { useDatasetStore } from '../stores/datasetStore';
+import { computeDatasetWithFormulas } from '../utils/formulaEngine';
 
 export const ChartGallery = () => {
   const [query, setQuery] = useState('');
   const charts = useChartStore((state) => state.charts);
-  const datasets = useDatasetStore((state) => state.datasets);
-  const visible = useMemo(() => charts.filter((chart) => chart.name.toLowerCase().includes(query.toLowerCase()) || chart.tags.some((tag) => tag.includes(query))), [charts, query]);
+  const rawDatasets = useDatasetStore((state) => state.datasets);
+
+  const datasets = useMemo(
+    () => rawDatasets.map((ds) => ({ ...ds, ...computeDatasetWithFormulas(ds) })),
+    [rawDatasets],
+  );
+
+  const visible = useMemo(
+    () => charts.filter((chart) => chart.name.toLowerCase().includes(query.toLowerCase()) || chart.tags.some((tag) => tag.includes(query))),
+    [charts, query],
+  );
 
   return (
     <main className="page">

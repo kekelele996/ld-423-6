@@ -6,6 +6,7 @@ import { FieldSelector } from '../components/common/FieldSelector';
 import { useChartConfig } from '../hooks/useChartConfig';
 import { useChartStore } from '../stores/chartStore';
 import { useDatasetStore } from '../stores/datasetStore';
+import { computeDatasetWithFormulas } from '../utils/formulaEngine';
 
 export const ChartEditor = () => {
   const datasets = useDatasetStore((state) => state.datasets);
@@ -13,7 +14,14 @@ export const ChartEditor = () => {
   const selectDataset = useDatasetStore((state) => state.selectDataset);
   const charts = useChartStore((state) => state.charts);
   const saveChart = useChartStore((state) => state.saveChart);
-  const dataset = datasets.find((candidate) => candidate.id === selectedDatasetId) ?? datasets[0];
+  const rawDataset = datasets.find((candidate) => candidate.id === selectedDatasetId) ?? datasets[0];
+
+  const dataset = useMemo(() => {
+    if (!rawDataset) return undefined;
+    const computed = computeDatasetWithFormulas(rawDataset);
+    return { ...rawDataset, ...computed };
+  }, [rawDataset]);
+
   const { suggestedConfig, validateConfig } = useChartConfig(dataset);
   const [config, setConfig] = useState(suggestedConfig);
   const errors = useMemo(() => (config ? validateConfig(config) : []), [config, validateConfig]);
@@ -35,8 +43,11 @@ export const ChartEditor = () => {
             value={dataset.id}
             onChange={(event) => {
               selectDataset(event.target.value);
-              const nextDataset = datasets.find((candidate) => candidate.id === event.target.value);
-              if (nextDataset) setConfig({ ...config, datasetId: nextDataset.id, xField: nextDataset.columns[0]?.name ?? '', yField: nextDataset.columns[1]?.name ?? '' });
+              const nextRawDataset = datasets.find((candidate) => candidate.id === event.target.value);
+              if (nextRawDataset) {
+                const nextDataset = { ...nextRawDataset, ...computeDatasetWithFormulas(nextRawDataset) };
+                setConfig({ ...config, datasetId: nextDataset.id, xField: nextDataset.columns[0]?.name ?? '', yField: nextDataset.columns[1]?.name ?? '' });
+              }
             }}
           >
             {datasets.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}

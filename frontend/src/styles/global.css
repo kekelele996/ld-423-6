@@ -57,3 +57,182 @@ input, select { width: 100%; border: 1px solid var(--line); background: var(--su
   .workspace-grid, .editor-grid, .report-layout { grid-template-columns: 1fr; }
   .page-head { align-items: stretch; flex-direction: column; }
 }
+
+.head-actions { display: flex; gap: 10px; align-items: center; }
+.secondary-btn {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--surface-raised);
+  padding: 9px 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.column-editor-item {
+  position: relative;
+}
+.column-editor-item.is-formula {
+  border: 1px solid color-mix(in oklch, var(--accent) 40%, var(--line));
+  padding: 10px;
+  background: color-mix(in oklch, var(--accent) 6%, var(--surface));
+}
+.formula-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  background: var(--accent);
+  color: var(--surface-raised);
+  border-radius: 3px;
+  font-style: italic;
+  font-weight: bold;
+}
+.formula-column-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.icon-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.icon-btn--danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.formula-editor-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+}
+.formula-editor-modal {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  width: min(640px, 92vw);
+  max-height: 88vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+.formula-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 8px;
+}
+.close-btn:hover { color: var(--ink); }
+.formula-editor-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: grid;
+  gap: 16px;
+}
+.formula-editor-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.formula-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  resize: vertical;
+}
+.help-toggle {
+  margin-left: 10px;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.help-toggle:hover { color: var(--accent); }
+.formula-help {
+  border: 1px dashed var(--line);
+  padding: 14px;
+  background: var(--surface);
+  display: grid;
+  gap: 14px;
+}
+.help-section h4 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+.field-chips, .function-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.field-chip, .func-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.field-chip:hover, .func-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chip-type {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.func-desc {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.op-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.op-list code {
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
+}
+.example-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.example-list code {
+  background: var(--surface-raised);
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
